@@ -80,9 +80,15 @@ const locations = [
   },
   {
     name: "lose",
-    "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
+    "button text": ["Reiniciar?", "Reiniciar?", "Reiniciar?"],
     "button functions": [restart, restart, restart],
     text: "You die. ☠️",
+  },
+  {
+    name: "win",
+    "button text": ["Reiniciar?", "Reiniciar?", "Reiniciar?"],
+    "button functions": [restart, restart, restart],
+    text: "Voce derretou o Dragao! VOCE VENCEU O JOGO! 🎉",
   },
 ];
 
@@ -196,7 +202,11 @@ function attack() {
   if (health <= 0) {
     lose();
   } else if (monsterHealth <= 0) {
-    defeatMonster();
+    if (fighting === 2) {
+      winGame();
+    } else {
+      defeatMonster();
+    }
   }
 }
 
@@ -214,6 +224,10 @@ function defeatMonster() {
 
 function lose() {
   update(locations[5]);
+}
+
+function winGame() {
+  update(locations[6]);
 }
 
 function restart() {
