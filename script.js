@@ -45,9 +45,9 @@ const locations = [
   {
     name: "store",
     "button text": [
-      "Buy 10 health (10 gold)",
-      "Buy weapon (30 gold)",
-      "Go to town square",
+      "Comprar 10pts de saude (10 gold)",
+      "Comprar Armas (30 gold)",
+      "Vá para a Praça",
     ],
     "button functions": [buyHealth, buyWeapon, goTown],
     text: "Você entra na loja.",
@@ -70,25 +70,27 @@ const locations = [
   },
   {
     name: "kill monster",
-    "button text": [
-      "Go to town square",
-      "Go to town square",
-      "Go to town square",
-    ],
-    "button functions": [goTown, goTown, goTown],
-    text: "The monster screams Arg! as it dies. You gain experience points and find gold.",
+    "button text": ["Vá para a Praça", "Vá para a Praça", "Vá para a Praça"],
+    "button functions": [goTown, goTown, easterEgg],
+    text: "O monstro grita Arg! à medida que morre. Você ganha pontos de experiência e encontra ouro.",
   },
   {
     name: "lose",
     "button text": ["Reiniciar?", "Reiniciar?", "Reiniciar?"],
     "button functions": [restart, restart, restart],
-    text: "You die. ☠️",
+    text: "Você Morreu. ☠️",
   },
   {
     name: "win",
     "button text": ["Reiniciar?", "Reiniciar?", "Reiniciar?"],
     "button functions": [restart, restart, restart],
     text: "Voce derretou o Dragao! VOCE VENCEU O JOGO! 🎉",
+  },
+  {
+    name: "easter egg",
+    "button text": ["2", "8", "Go to town square?"],
+    "button functions": [pickTwo, pickEight, goTown],
+    text: "Você encontra um jogo secreto. Escolha um número acima. Dez números serão escolhidos aleatoriamente entre 0 e 10. Se o número escolhido corresponder a um dos números aleatórios, você ganha!",
   },
 ];
 
@@ -212,8 +214,9 @@ function attack() {
       defeatMonster();
     }
   }
-  if (Math.random() <= 0.1) {
+  if (Math.random() <= 0.1 && inventory.length !== 1) {
     text.innerText += " Your " + inventory.pop() + " breaks.";
+    currentWeapon--;
   }
 }
 
@@ -259,4 +262,40 @@ function restart() {
   xpText.innerText = xp;
 
   goTown();
+}
+
+function easterEgg() {
+  update(locations[7]);
+}
+
+function pick(guess) {
+  const numbers = [];
+  while (numbers.length < 10) {
+    numbers.push(Math.floor(Math.random() * 11));
+  }
+  text.innerText =
+    "Você escolheu " + guess + ". Aqui estão os números aleatórios:\n";
+  for (let i = 0; i < 10; i++) {
+    text.innerText += numbers[i] + "\n";
+  }
+  if (numbers.includes(guess)) {
+    text.innerText += "Certo! Você ganha 20 ouro!";
+    gold += 20;
+    goldText.innerText = gold;
+  } else {
+    text.innerText += "Errado! Você perde 10 pontos de vida!";
+    health -= 10;
+    healthText.innerText = health;
+    if (health <= 0) {
+      lose();
+    }
+  }
+}
+
+function pickTwo() {
+  pick(2);
+}
+
+function pickEight() {
+  pick(8);
 }
